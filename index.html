@@ -11,13 +11,9 @@
     .hdr{text-align:center;margin-bottom:16px}
     .hdr h1{font-size:1.2rem;font-weight:700;color:#38bdf8}
     .hdr p{font-size:0.78rem;color:#64748b;margin-top:3px}
-    /* banner URL belum diisi */
-    #bnrCfg{display:none;width:100%;max-width:380px;background:#422006;border:1px solid #d97706;border-radius:10px;padding:12px 14px;font-size:0.82rem;color:#fcd34d;margin-bottom:14px;line-height:1.5;text-align:center}
-    /* scanner */
     #pScanner{width:100%;max-width:380px}
     #reader{width:100%;border-radius:14px;overflow:hidden;border:2px solid #38bdf8;box-shadow:0 0 20px rgba(56,189,248,.2)}
     #reader__dashboard_section_swaplink,#reader__dashboard_section_fileselection{display:none!important}
-    /* panel foto */
     #pKamera{display:none;width:100%;max-width:380px;flex-direction:column;align-items:center;gap:10px}
     .info-box{width:100%;background:#1e293b;border-radius:10px;padding:11px 14px;border-left:4px solid #38bdf8}
     .info-box .nm{font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:2px}
@@ -31,14 +27,12 @@
     .b-ulang{background:#334155;color:#cbd5e1}
     .b-kirim{background:#16a34a;color:#fff;display:none}
     .b-skip{background:#1e293b;color:#64748b;border:1px solid #334155}
-    /* status */
     #sts{margin-top:12px;width:100%;max-width:380px;padding:12px 14px;border-radius:10px;font-size:0.88rem;text-align:center;background:#1e293b;color:#64748b;min-height:46px;display:flex;align-items:center;justify-content:center;line-height:1.4;transition:all .3s}
     #sts.load{background:#1e3a5f;color:#7dd3fc;border:1px solid #0284c7}
     #sts.ok{background:#052e16;color:#6ee7b7;border:1px solid #16a34a}
     #sts.err{background:#450a0a;color:#fca5a5;border:1px solid #dc2626}
     #sts.wrn{background:#422006;color:#fcd34d;border:1px solid #d97706}
     #btnNext{display:none;margin-top:10px;padding:10px 32px;border-radius:8px;background:#0284c7;color:#fff;font-size:0.95rem;font-weight:600;border:none;cursor:pointer}
-    /* riwayat */
     #rwyt{margin-top:22px;width:100%;max-width:380px}
     #rwyt h2{font-size:0.75rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
     #jml{font-size:0.8rem;color:#38bdf8;margin-bottom:7px}
@@ -53,13 +47,10 @@
   <p id="tgl"></p>
 </div>
 
-<!-- Banner jika URL belum diisi -->
-<div id="bnrCfg">⚠️ <strong>URL Apps Script belum diisi!</strong><br>Cari baris APPS_SCRIPT_URL di kode ini dan isi dengan URL Web App lo.</div>
-
 <!-- Panel QR -->
 <div id="pScanner"><div id="reader"></div></div>
 
-<!-- Panel Kamera -->
+<!-- Panel Kamera Foto -->
 <div id="pKamera">
   <div class="info-box">
     <div class="nm" id="iNama">-</div>
@@ -71,7 +62,7 @@
   <div class="brow">
     <button class="btn b-foto"  id="bFoto"  onclick="ambilFoto()">📸 Ambil Foto</button>
     <button class="btn b-ulang" id="bUlang" onclick="ulangFoto()" style="display:none">🔄 Ulang</button>
-    <button class="btn b-kirim" id="bKirim" onclick="kirimFoto()">✅ Kirim</button>
+    <button class="btn b-kirim" id="bKirim" onclick="kirimFoto()">✅ Kirim Foto</button>
   </div>
   <div class="brow">
     <button class="btn b-skip" onclick="skipFoto()">Lewati (tanpa foto)</button>
@@ -87,12 +78,7 @@
 </div>
 
 <script>
-// ════════════════════════════════════════════════
-//  ⚙️  ISI URL WEB APP APPS SCRIPT LO DI SINI
-//  Contoh: 'https://script.google.com/macros/s/AKfy.../exec'
-// ════════════════════════════════════════════════
 var URL_AS = 'https://script.google.com/macros/s/AKfycbzbpAMFYi2AKbyLBzPcTF1QvrCQezbCKh-nsjKXB1YIHTJFk3WivH9s-ESXl1ADQNgT/exec';
-// ════════════════════════════════════════════════
 
 var scanner=null, proses=false, total=0;
 var stream=null, foto64=null;
@@ -101,10 +87,7 @@ var cRow=null, cSheet=null, cNama=null, cUsaha=null;
 document.getElementById('tgl').textContent =
   new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-window.onload = function(){
-  if(URL_AS==='GANTI_DENGAN_URL_WEB_APP_LO') document.getElementById('bnrCfg').style.display='block';
-  mulaiScan();
-};
+window.onload = mulaiScan;
 
 // ── FASE 1: QR SCANNER ───────────────────────────
 function mulaiScan(){
@@ -114,110 +97,159 @@ function mulaiScan(){
   document.getElementById('pScanner').style.display='block';
   document.getElementById('pKamera').style.display='none';
   stopCam();
-  if(scanner){scanner.clear().catch(()=>{});scanner=null;}
-  scanner=new Html5QrcodeScanner('reader',{fps:10,qrbox:{width:240,height:240},rememberLastUsedCamera:true,aspectRatio:1.0});
-  scanner.render(onQR,()=>{});
+  if(scanner){scanner.clear().catch(function(){});scanner=null;}
+  scanner=new Html5QrcodeScanner('reader',{
+    fps:10,
+    qrbox:{width:240,height:240},
+    rememberLastUsedCamera:true,
+    aspectRatio:1.0
+  });
+  scanner.render(onQR, function(){});
 }
 
 function onQR(qrText){
-  if(proses)return;
-  proses=true;
-  scanner.clear().catch(()=>{});
-  var p=qrText.split('\t');
-  cNama=(p[0]||'').trim(); cUsaha=(p[1]||'').trim();
+  if(proses) return;
+  proses = true;
+  scanner.clear().catch(function(){});
+
+  var p = qrText.split('\t');
+  cNama  = (p[0]||'').trim();
+  cUsaha = (p[1]||'').trim();
+
   setS('⏳ Menyimpan data absensi…','load');
-  kirimAS({action:'absensi',qrText:qrText},function(res){
-    if(!res.sukses){setS(res.pesan,res.pesan.includes('⚠️')?'wrn':'err');show('btnNext');return;}
-    cRow=res.rowIndex; cSheet=res.sheetName;
+
+  kirimAS({action:'absensi', qrText:qrText}, function(res){
+    if(!res.sukses){
+      setS(res.pesan, res.pesan.indexOf('⚠️')!==-1 ? 'wrn':'err');
+      document.getElementById('btnNext').style.display='inline-block';
+      return;
+    }
+    cRow   = res.rowIndex;
+    cSheet = res.sheetName;
     setS(res.pesan,'ok');
-    document.getElementById('pScanner').style.display='none';
-    document.getElementById('pKamera').style.display='flex';
-    document.getElementById('iNama').textContent=cNama||'-';
-    document.getElementById('iUsaha').textContent=cUsaha||'-';
+
+    // Sembunyikan scanner, tampilkan panel kamera
+    document.getElementById('pScanner').style.display = 'none';
+    document.getElementById('iNama').textContent  = cNama  || '-';
+    document.getElementById('iUsaha').textContent = cUsaha || '-';
+    document.getElementById('pKamera').style.display = 'flex';
     bukaKam();
   });
 }
 
 // ── FASE 2: KAMERA FOTO ──────────────────────────
 function bukaKam(){
-  document.getElementById('vidCam').style.display='block';
-  document.getElementById('prevFoto').style.display='none';
-  document.getElementById('bFoto').style.display='inline-block';
-  document.getElementById('bUlang').style.display='none';
-  document.getElementById('bKirim').style.display='none';
-  navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}})
-  .then(function(s){stream=s;document.getElementById('vidCam').srcObject=s;setS('📷 Arahkan ke peserta lalu ambil foto…','');})
-  .catch(function(){setS('⚠️ Kamera tidak bisa dibuka. Gunakan tombol Lewati.','wrn');document.getElementById('vidCam').style.display='none';});
+  document.getElementById('vidCam').style.display  = 'block';
+  document.getElementById('prevFoto').style.display = 'none';
+  document.getElementById('bFoto').style.display   = 'inline-block';
+  document.getElementById('bUlang').style.display  = 'none';
+  document.getElementById('bKirim').style.display  = 'none';
+
+  navigator.mediaDevices.getUserMedia({
+    video:{facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:720}}
+  })
+  .then(function(s){
+    stream = s;
+    document.getElementById('vidCam').srcObject = s;
+    setS('📷 Arahkan ke peserta lalu ambil foto…','');
+  })
+  .catch(function(e){
+    setS('⚠️ Kamera tidak bisa dibuka. Gunakan tombol Lewati.','wrn');
+    document.getElementById('vidCam').style.display = 'none';
+  });
 }
 
 function ambilFoto(){
-  var v=document.getElementById('vidCam'),c=document.getElementById('cvs');
-  c.width=v.videoWidth||640;c.height=v.videoHeight||480;
+  var v = document.getElementById('vidCam');
+  var c = document.getElementById('cvs');
+  c.width  = v.videoWidth  || 640;
+  c.height = v.videoHeight || 480;
   c.getContext('2d').drawImage(v,0,0);
-  foto64=c.toDataURL('image/jpeg',0.85);
-  document.getElementById('prevFoto').src=foto64;
-  document.getElementById('prevFoto').style.display='block';
-  v.style.display='none';
-  document.getElementById('bFoto').style.display='none';
-  document.getElementById('bUlang').style.display='inline-block';
-  document.getElementById('bKirim').style.display='inline-block';
+  foto64 = c.toDataURL('image/jpeg', 0.85);
+
+  document.getElementById('prevFoto').src = foto64;
+  document.getElementById('prevFoto').style.display = 'block';
+  v.style.display = 'none';
+  document.getElementById('bFoto').style.display  = 'none';
+  document.getElementById('bUlang').style.display = 'inline-block';
+  document.getElementById('bKirim').style.display = 'inline-block';
   setS('Foto siap. Kirim atau ambil ulang.','');
 }
 
 function ulangFoto(){
-  foto64=null;
-  document.getElementById('prevFoto').style.display='none';
-  document.getElementById('vidCam').style.display='block';
-  document.getElementById('bFoto').style.display='inline-block';
-  document.getElementById('bUlang').style.display='none';
-  document.getElementById('bKirim').style.display='none';
+  foto64 = null;
+  document.getElementById('prevFoto').style.display  = 'none';
+  document.getElementById('vidCam').style.display    = 'block';
+  document.getElementById('bFoto').style.display     = 'inline-block';
+  document.getElementById('bUlang').style.display    = 'none';
+  document.getElementById('bKirim').style.display    = 'none';
   setS('Arahkan kamera lalu ambil foto…','');
 }
 
 function kirimFoto(){
-  if(!foto64)return;
+  if(!foto64) return;
   setS('⏳ Mengupload foto ke Drive…','load');
-  var ts=new Date().toISOString().replace(/[:.]/g,'-');
-  var fn='absensi_'+(cNama||'x').replace(/\s+/g,'_')+'_'+ts+'.jpg';
-  kirimAS({action:'foto',base64:foto64,fileName:fn,rowIndex:cRow,sheetName:cSheet},function(res){
+  var ts = new Date().toISOString().replace(/[:.]/g,'-');
+  var fn = 'absensi_'+(cNama||'x').replace(/\s+/g,'_')+'_'+ts+'.jpg';
+  kirimAS({
+    action   : 'foto',
+    base64   : foto64,
+    fileName : fn,
+    rowIndex : cRow,
+    sheetName: cSheet
+  }, function(res){
     stopCam();
-    setS(res.pesan,res.sukses?'ok':'wrn');
-    if(res.sukses)addRiwayat(cNama,cUsaha,true);
-    show('btnNext');
-    document.getElementById('pKamera').style.display='none';
+    setS(res.pesan, res.sukses ? 'ok':'wrn');
+    if(res.sukses) addRiwayat(cNama, cUsaha, true);
+    document.getElementById('pKamera').style.display = 'none';
+    document.getElementById('btnNext').style.display = 'inline-block';
   });
 }
 
 function skipFoto(){
   stopCam();
-  addRiwayat(cNama,cUsaha,false);
+  addRiwayat(cNama, cUsaha, false);
   setS('✅ Absensi tersimpan (tanpa foto).','ok');
-  document.getElementById('pKamera').style.display='none';
-  show('btnNext');
+  document.getElementById('pKamera').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'inline-block';
 }
 
 // ── HELPERS ──────────────────────────────────────
-function kirimAS(payload,cb){
-  fetch(URL_AS,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}})
-  .then(function(r){return r.json();})
+function kirimAS(payload, cb){
+  fetch(URL_AS, {
+    method : 'POST',
+    body   : JSON.stringify(payload),
+    headers: {'Content-Type':'text/plain'}
+  })
+  .then(function(r){ return r.json(); })
   .then(cb)
-  .catch(function(e){setS('❌ Gagal koneksi: '+e.message,'err');show('btnNext');});
+  .catch(function(e){
+    setS('❌ Gagal koneksi: '+e.message,'err');
+    document.getElementById('btnNext').style.display = 'inline-block';
+  });
 }
 
-function stopCam(){if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}}
-function setS(t,c){var e=document.getElementById('sts');e.textContent=t;e.className=c;}
-function show(id){document.getElementById(id).style.display='inline-block';}
+function stopCam(){
+  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+}
 
-function addRiwayat(nama,usaha,ada){
+function setS(t,c){
+  var e = document.getElementById('sts');
+  e.textContent = t;
+  e.className   = c;
+}
+
+function addRiwayat(nama, usaha, ada){
   total++;
-  var d=document.getElementById('rwyt');
-  var el=document.createElement('div');
-  el.className='rv-item';
-  var j=new Date().toLocaleTimeString('id-ID');
-  el.innerHTML=j+' — <strong>'+(nama||'-')+'</strong>'+(usaha?' · '+usaha:'')
+  var d  = document.getElementById('rwyt');
+  var el = document.createElement('div');
+  el.className = 'rv-item';
+  var j = new Date().toLocaleTimeString('id-ID');
+  el.innerHTML = j+' — <strong>'+(nama||'-')+'</strong>'
+    +(usaha?' · '+usaha:'')
     +(ada?'<br><span class="ftag">📸 Foto tersimpan</span>':'');
-  d.insertBefore(el,document.getElementById('jml').nextSibling);
-  document.getElementById('jml').textContent=total+' peserta tercatat';
+  d.insertBefore(el, document.getElementById('jml').nextSibling);
+  document.getElementById('jml').textContent = total+' peserta tercatat';
 }
 </script>
 </body>
