@@ -1,360 +1,224 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Absensi CFD Sudirman 2</title>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0f172a;
-      color: #f1f5f9;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 16px 40px;
-    }
-    .header { text-align: center; margin-bottom: 18px; }
-    .header h1 { font-size: 1.2rem; font-weight: 700; color: #38bdf8; }
-    .header p  { font-size: 0.78rem; color: #64748b; margin-top: 4px; }
-
-    /* ── Config banner (muncul jika APPS_SCRIPT_URL belum diisi) ── */
-    #bannerConfig {
-      display: none;
-      width: 100%; max-width: 380px;
-      background: #422006; border: 1px solid #d97706;
-      border-radius: 10px; padding: 12px 14px;
-      font-size: 0.82rem; color: #fcd34d;
-      margin-bottom: 14px; line-height: 1.5;
-    }
-
-    /* ── QR Scanner ── */
-    #panelScanner { width: 100%; max-width: 380px; }
-    #reader {
-      width: 100%; border-radius: 14px; overflow: hidden;
-      border: 2px solid #38bdf8;
-      box-shadow: 0 0 24px rgba(56,189,248,0.2);
-    }
-    #reader__dashboard_section_swaplink,
-    #reader__dashboard_section_fileselection { display: none !important; }
-
-    /* ── Panel Kamera Foto ── */
-    #panelKamera {
-      display: none; width: 100%; max-width: 380px;
-      flex-direction: column; align-items: center; gap: 12px;
-    }
-    .info-peserta {
-      width: 100%; background: #1e293b; border-radius: 10px;
-      padding: 12px 14px; font-size: 0.82rem; border-left: 4px solid #38bdf8;
-    }
-    .info-peserta .nama { font-size: 1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 2px; }
-    .info-peserta .sub  { color: #64748b; }
-
-    #videoKamera {
-      width: 100%; border-radius: 12px; border: 2px solid #334155;
-      background: #000; max-height: 320px; object-fit: cover;
-    }
-    #canvasHidden { display: none; }
-    #previewFoto {
-      display: none; width: 100%; border-radius: 12px;
-      border: 2px solid #16a34a; object-fit: cover; max-height: 320px;
-    }
-
-    .btn-row { display: flex; gap: 10px; width: 100%; }
-    .btn {
-      flex: 1; padding: 12px 0; border-radius: 10px;
-      font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer;
-    }
-    .btn-foto  { background: #0284c7; color: #fff; }
-    .btn-ulang { background: #334155; color: #cbd5e1; }
-    .btn-kirim { background: #16a34a; color: #fff; display: none; }
-    .btn-skip  { background: #1e293b; color: #64748b; border: 1px solid #334155; }
-
-    /* ── Status ── */
-    #status {
-      margin-top: 14px; width: 100%; max-width: 380px;
-      padding: 13px 16px; border-radius: 10px; font-size: 0.88rem;
-      text-align: center; background: #1e293b; color: #64748b;
-      min-height: 48px; display: flex; align-items: center;
-      justify-content: center; line-height: 1.4; transition: all 0.3s;
-    }
-    #status.loading { background: #1e3a5f; color: #7dd3fc; border: 1px solid #0284c7; }
-    #status.sukses  { background: #052e16; color: #6ee7b7; border: 1px solid #16a34a; }
-    #status.gagal   { background: #450a0a; color: #fca5a5; border: 1px solid #dc2626; }
-    #status.warn    { background: #422006; color: #fcd34d; border: 1px solid #d97706; }
-
-    #btnScanLagi {
-      display: none; margin-top: 10px; padding: 10px 32px;
-      border-radius: 8px; background: #0284c7; color: white;
-      font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer;
-    }
-
-    /* ── Riwayat ── */
-    #riwayat { margin-top: 24px; width: 100%; max-width: 380px; }
-    #riwayat h2 { font-size: 0.75rem; color: #475569; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-    #jumlah { font-size: 0.8rem; color: #38bdf8; margin-bottom: 8px; }
-    .item-riwayat {
-      background: #1e293b; border-radius: 8px; padding: 9px 12px;
-      margin-bottom: 6px; font-size: 0.78rem; color: #94a3b8;
-      border-left: 3px solid #16a34a;
-    }
-    .foto-tag { display: inline-block; margin-top: 3px; font-size: 0.72rem; color: #38bdf8; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px}
+    .hdr{text-align:center;margin-bottom:16px}
+    .hdr h1{font-size:1.2rem;font-weight:700;color:#38bdf8}
+    .hdr p{font-size:0.78rem;color:#64748b;margin-top:3px}
+    /* banner URL belum diisi */
+    #bnrCfg{display:none;width:100%;max-width:380px;background:#422006;border:1px solid #d97706;border-radius:10px;padding:12px 14px;font-size:0.82rem;color:#fcd34d;margin-bottom:14px;line-height:1.5;text-align:center}
+    /* scanner */
+    #pScanner{width:100%;max-width:380px}
+    #reader{width:100%;border-radius:14px;overflow:hidden;border:2px solid #38bdf8;box-shadow:0 0 20px rgba(56,189,248,.2)}
+    #reader__dashboard_section_swaplink,#reader__dashboard_section_fileselection{display:none!important}
+    /* panel foto */
+    #pKamera{display:none;width:100%;max-width:380px;flex-direction:column;align-items:center;gap:10px}
+    .info-box{width:100%;background:#1e293b;border-radius:10px;padding:11px 14px;border-left:4px solid #38bdf8}
+    .info-box .nm{font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:2px}
+    .info-box .sb{font-size:0.8rem;color:#64748b}
+    #vidCam{width:100%;border-radius:12px;border:2px solid #334155;background:#000;max-height:300px;object-fit:cover}
+    #cvs{display:none}
+    #prevFoto{display:none;width:100%;border-radius:12px;border:2px solid #16a34a;object-fit:cover;max-height:300px}
+    .brow{display:flex;gap:8px;width:100%}
+    .btn{flex:1;padding:11px 0;border-radius:10px;font-size:0.9rem;font-weight:600;border:none;cursor:pointer}
+    .b-foto{background:#0284c7;color:#fff}
+    .b-ulang{background:#334155;color:#cbd5e1}
+    .b-kirim{background:#16a34a;color:#fff;display:none}
+    .b-skip{background:#1e293b;color:#64748b;border:1px solid #334155}
+    /* status */
+    #sts{margin-top:12px;width:100%;max-width:380px;padding:12px 14px;border-radius:10px;font-size:0.88rem;text-align:center;background:#1e293b;color:#64748b;min-height:46px;display:flex;align-items:center;justify-content:center;line-height:1.4;transition:all .3s}
+    #sts.load{background:#1e3a5f;color:#7dd3fc;border:1px solid #0284c7}
+    #sts.ok{background:#052e16;color:#6ee7b7;border:1px solid #16a34a}
+    #sts.err{background:#450a0a;color:#fca5a5;border:1px solid #dc2626}
+    #sts.wrn{background:#422006;color:#fcd34d;border:1px solid #d97706}
+    #btnNext{display:none;margin-top:10px;padding:10px 32px;border-radius:8px;background:#0284c7;color:#fff;font-size:0.95rem;font-weight:600;border:none;cursor:pointer}
+    /* riwayat */
+    #rwyt{margin-top:22px;width:100%;max-width:380px}
+    #rwyt h2{font-size:0.75rem;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+    #jml{font-size:0.8rem;color:#38bdf8;margin-bottom:7px}
+    .rv-item{background:#1e293b;border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:0.78rem;color:#94a3b8;border-left:3px solid #16a34a}
+    .ftag{display:inline-block;margin-top:3px;font-size:0.72rem;color:#38bdf8}
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>📋 ABSENSI CFD SUDIRMAN 2</h1>
-    <p id="tglHari"></p>
-  </div>
+<div class="hdr">
+  <h1>📋 ABSENSI CFD SUDIRMAN 2</h1>
+  <p id="tgl"></p>
+</div>
 
-  <!-- Banner jika URL belum diisi -->
-  <div id="bannerConfig">
-    ⚠️ <strong>APPS_SCRIPT_URL belum diisi!</strong><br>
-    Buka file index.html, cari baris <code>APPS_SCRIPT_URL</code> di bagian script, dan isi dengan URL Web App lo.
-  </div>
+<!-- Banner jika URL belum diisi -->
+<div id="bnrCfg">⚠️ <strong>URL Apps Script belum diisi!</strong><br>Cari baris APPS_SCRIPT_URL di kode ini dan isi dengan URL Web App lo.</div>
 
-  <div id="panelScanner">
-    <div id="reader"></div>
-  </div>
+<!-- Panel QR -->
+<div id="pScanner"><div id="reader"></div></div>
 
-  <div id="panelKamera">
-    <div class="info-peserta">
-      <div class="nama" id="infoNama">-</div>
-      <div class="sub"  id="infoUsaha">-</div>
-    </div>
-    <video id="videoKamera" autoplay playsinline></video>
-    <canvas id="canvasHidden"></canvas>
-    <img id="previewFoto" alt="Preview foto" />
-    <div class="btn-row">
-      <button class="btn btn-foto"  id="btnFoto"  onclick="ambilFoto()">📸 Ambil Foto</button>
-      <button class="btn btn-ulang" id="btnUlang" onclick="ulangFoto()" style="display:none">🔄 Ulang</button>
-      <button class="btn btn-kirim" id="btnKirim" onclick="kirimFoto()">✅ Kirim</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-skip" onclick="selesaiTanpaFoto()">Lewati (tanpa foto)</button>
-    </div>
+<!-- Panel Kamera -->
+<div id="pKamera">
+  <div class="info-box">
+    <div class="nm" id="iNama">-</div>
+    <div class="sb" id="iUsaha">-</div>
   </div>
-
-  <div id="status">Memuat scanner…</div>
-  <button id="btnScanLagi" onclick="mulaiScan()">🔄 Scan Berikutnya</button>
-
-  <div id="riwayat">
-    <h2>Riwayat</h2>
-    <div id="jumlah">0 peserta tercatat</div>
+  <video id="vidCam" autoplay playsinline></video>
+  <canvas id="cvs"></canvas>
+  <img id="prevFoto" alt="preview"/>
+  <div class="brow">
+    <button class="btn b-foto"  id="bFoto"  onclick="ambilFoto()">📸 Ambil Foto</button>
+    <button class="btn b-ulang" id="bUlang" onclick="ulangFoto()" style="display:none">🔄 Ulang</button>
+    <button class="btn b-kirim" id="bKirim" onclick="kirimFoto()">✅ Kirim</button>
   </div>
+  <div class="brow">
+    <button class="btn b-skip" onclick="skipFoto()">Lewati (tanpa foto)</button>
+  </div>
+</div>
+
+<div id="sts">Memuat scanner…</div>
+<button id="btnNext" onclick="mulaiScan()">🔄 Scan Berikutnya</button>
+
+<div id="rwyt">
+  <h2>Riwayat</h2>
+  <div id="jml">0 peserta tercatat</div>
+</div>
 
 <script>
-  // ══════════════════════════════════════════════════
-  //  ⚙️  KONFIGURASI — ISI URL WEB APP LO DI SINI
-  // ══════════════════════════════════════════════════
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbze0IbAyjxfeN6cVdKukhoRQkT9tm1Cb73iauTq8JDlyNH4d1NvZAx0lvf_KkkDsIfn/exec';
-  // Contoh: 'https://script.google.com/macros/s/AKfycb.../exec'
-  // ══════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+//  ⚙️  ISI URL WEB APP APPS SCRIPT LO DI SINI
+//  Contoh: 'https://script.google.com/macros/s/AKfy.../exec'
+// ════════════════════════════════════════════════
+var URL_AS = 'https://script.google.com/macros/s/AKfycbze0IbAyjxfeN6cVdKukhoRQkT9tm1Cb73iauTq8JDlyNH4d1NvZAx0lvf_KkkDsIfn/exec';
+// ════════════════════════════════════════════════
 
-  let scanner      = null;
-  let sedangProses = false;
-  let totalScan    = 0;
-  let streamKamera = null;
-  let fotoBase64   = null;
-  let currentRow   = null;
-  let currentSheet = null;
-  let currentNama  = null;
-  let currentUsaha = null;
+var scanner=null, proses=false, total=0;
+var stream=null, foto64=null;
+var cRow=null, cSheet=null, cNama=null, cUsaha=null;
 
-  document.getElementById('tglHari').textContent =
-    new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+document.getElementById('tgl').textContent =
+  new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-  window.onload = function() {
-    if (APPS_SCRIPT_URL === 'GANTI_DENGAN_URL_WEB_APP_LO') {
-      document.getElementById('bannerConfig').style.display = 'block';
-    }
-    mulaiScan();
-  };
+window.onload = function(){
+  if(URL_AS==='GANTI_DENGAN_URL_WEB_APP_LO') document.getElementById('bnrCfg').style.display='block';
+  mulaiScan();
+};
 
-  // ══════════════════════════════════════════════════
-  //  FASE 1 — QR SCANNER
-  // ══════════════════════════════════════════════════
-  function mulaiScan() {
-    sedangProses = false;
-    fotoBase64   = null;
-    setStatus('Arahkan kamera ke QR Code peserta…', '');
-    document.getElementById('btnScanLagi').style.display  = 'none';
-    document.getElementById('panelScanner').style.display = 'block';
-    document.getElementById('panelKamera').style.display  = 'none';
-    stopKamera();
+// ── FASE 1: QR SCANNER ───────────────────────────
+function mulaiScan(){
+  proses=false; foto64=null;
+  setS('Arahkan kamera ke QR Code peserta…','');
+  document.getElementById('btnNext').style.display='none';
+  document.getElementById('pScanner').style.display='block';
+  document.getElementById('pKamera').style.display='none';
+  stopCam();
+  if(scanner){scanner.clear().catch(()=>{});scanner=null;}
+  scanner=new Html5QrcodeScanner('reader',{fps:10,qrbox:{width:240,height:240},rememberLastUsedCamera:true,aspectRatio:1.0});
+  scanner.render(onQR,()=>{});
+}
 
-    if (scanner) { scanner.clear().catch(() => {}); scanner = null; }
+function onQR(qrText){
+  if(proses)return;
+  proses=true;
+  scanner.clear().catch(()=>{});
+  var p=qrText.split('\t');
+  cNama=(p[0]||'').trim(); cUsaha=(p[1]||'').trim();
+  setS('⏳ Menyimpan data absensi…','load');
+  kirimAS({action:'absensi',qrText:qrText},function(res){
+    if(!res.sukses){setS(res.pesan,res.pesan.includes('⚠️')?'wrn':'err');show('btnNext');return;}
+    cRow=res.rowIndex; cSheet=res.sheetName;
+    setS(res.pesan,'ok');
+    document.getElementById('pScanner').style.display='none';
+    document.getElementById('pKamera').style.display='flex';
+    document.getElementById('iNama').textContent=cNama||'-';
+    document.getElementById('iUsaha').textContent=cUsaha||'-';
+    bukaKam();
+  });
+}
 
-    scanner = new Html5QrcodeScanner('reader', {
-      fps: 10,
-      qrbox: { width: 240, height: 240 },
-      rememberLastUsedCamera: true,
-      aspectRatio: 1.0
-    });
-    scanner.render(onScanBerhasil, () => {});
-  }
+// ── FASE 2: KAMERA FOTO ──────────────────────────
+function bukaKam(){
+  document.getElementById('vidCam').style.display='block';
+  document.getElementById('prevFoto').style.display='none';
+  document.getElementById('bFoto').style.display='inline-block';
+  document.getElementById('bUlang').style.display='none';
+  document.getElementById('bKirim').style.display='none';
+  navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}})
+  .then(function(s){stream=s;document.getElementById('vidCam').srcObject=s;setS('📷 Arahkan ke peserta lalu ambil foto…','');})
+  .catch(function(){setS('⚠️ Kamera tidak bisa dibuka. Gunakan tombol Lewati.','wrn');document.getElementById('vidCam').style.display='none';});
+}
 
-  function onScanBerhasil(qrText) {
-    if (sedangProses) return;
-    sedangProses = true;
-    scanner.clear().catch(() => {});
+function ambilFoto(){
+  var v=document.getElementById('vidCam'),c=document.getElementById('cvs');
+  c.width=v.videoWidth||640;c.height=v.videoHeight||480;
+  c.getContext('2d').drawImage(v,0,0);
+  foto64=c.toDataURL('image/jpeg',0.85);
+  document.getElementById('prevFoto').src=foto64;
+  document.getElementById('prevFoto').style.display='block';
+  v.style.display='none';
+  document.getElementById('bFoto').style.display='none';
+  document.getElementById('bUlang').style.display='inline-block';
+  document.getElementById('bKirim').style.display='inline-block';
+  setS('Foto siap. Kirim atau ambil ulang.','');
+}
 
-    const parts     = qrText.split('\t');
-    const nama      = (parts[0] || '').trim();
-    const namaUsaha = (parts[1] || '').trim();
+function ulangFoto(){
+  foto64=null;
+  document.getElementById('prevFoto').style.display='none';
+  document.getElementById('vidCam').style.display='block';
+  document.getElementById('bFoto').style.display='inline-block';
+  document.getElementById('bUlang').style.display='none';
+  document.getElementById('bKirim').style.display='none';
+  setS('Arahkan kamera lalu ambil foto…','');
+}
 
-    setStatus('⏳ Menyimpan data absensi…', 'loading');
+function kirimFoto(){
+  if(!foto64)return;
+  setS('⏳ Mengupload foto ke Drive…','load');
+  var ts=new Date().toISOString().replace(/[:.]/g,'-');
+  var fn='absensi_'+(cNama||'x').replace(/\s+/g,'_')+'_'+ts+'.jpg';
+  kirimAS({action:'foto',base64:foto64,fileName:fn,rowIndex:cRow,sheetName:cSheet},function(res){
+    stopCam();
+    setS(res.pesan,res.sukses?'ok':'wrn');
+    if(res.sukses)addRiwayat(cNama,cUsaha,true);
+    show('btnNext');
+    document.getElementById('pKamera').style.display='none';
+  });
+}
 
-    // Kirim ke Apps Script via fetch (bukan google.script.run)
-    fetch(APPS_SCRIPT_URL, {
-      method : 'POST',
-      body   : JSON.stringify({ action: 'absensi', qrText: qrText }),
-      headers: { 'Content-Type': 'text/plain' } // text/plain agar tidak kena CORS preflight
-    })
-    .then(r => r.json())
-    .then(function(res) {
-      if (!res.sukses) {
-        const isWarn = res.pesan.includes('⚠️');
-        setStatus(res.pesan, isWarn ? 'warn' : 'gagal');
-        document.getElementById('btnScanLagi').style.display = 'inline-block';
-        return;
-      }
-      currentRow   = res.rowIndex;
-      currentSheet = res.sheetName;
-      currentNama  = nama;
-      currentUsaha = namaUsaha;
+function skipFoto(){
+  stopCam();
+  addRiwayat(cNama,cUsaha,false);
+  setS('✅ Absensi tersimpan (tanpa foto).','ok');
+  document.getElementById('pKamera').style.display='none';
+  show('btnNext');
+}
 
-      setStatus(res.pesan, 'sukses');
-      document.getElementById('panelScanner').style.display = 'none';
-      document.getElementById('panelKamera').style.display  = 'flex';
-      document.getElementById('infoNama').textContent  = nama      || '-';
-      document.getElementById('infoUsaha').textContent = namaUsaha || '-';
-      bukaKamera();
-    })
-    .catch(function(err) {
-      setStatus('❌ Gagal kirim data: ' + err.message, 'gagal');
-      document.getElementById('btnScanLagi').style.display = 'inline-block';
-    });
-  }
+// ── HELPERS ──────────────────────────────────────
+function kirimAS(payload,cb){
+  fetch(URL_AS,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}})
+  .then(function(r){return r.json();})
+  .then(cb)
+  .catch(function(e){setS('❌ Gagal koneksi: '+e.message,'err');show('btnNext');});
+}
 
-  // ══════════════════════════════════════════════════
-  //  FASE 2 — KAMERA FOTO
-  // ══════════════════════════════════════════════════
-  function bukaKamera() {
-    document.getElementById('videoKamera').style.display = 'block';
-    document.getElementById('previewFoto').style.display = 'none';
-    document.getElementById('btnFoto').style.display     = 'inline-block';
-    document.getElementById('btnUlang').style.display    = 'none';
-    document.getElementById('btnKirim').style.display    = 'none';
+function stopCam(){if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}}
+function setS(t,c){var e=document.getElementById('sts');e.textContent=t;e.className=c;}
+function show(id){document.getElementById(id).style.display='inline-block';}
 
-    navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
-    })
-    .then(function(stream) {
-      streamKamera = stream;
-      document.getElementById('videoKamera').srcObject = stream;
-      setStatus('📷 Arahkan kamera ke peserta, lalu ambil foto…', '');
-    })
-    .catch(function(err) {
-      setStatus('⚠️ Kamera foto tidak bisa dibuka. Gunakan tombol Lewati.', 'warn');
-      document.getElementById('videoKamera').style.display = 'none';
-    });
-  }
-
-  function ambilFoto() {
-    const video  = document.getElementById('videoKamera');
-    const canvas = document.getElementById('canvasHidden');
-    canvas.width  = video.videoWidth  || 640;
-    canvas.height = video.videoHeight || 480;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    fotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
-
-    const preview = document.getElementById('previewFoto');
-    preview.src   = fotoBase64;
-    preview.style.display               = 'block';
-    video.style.display                 = 'none';
-    document.getElementById('btnFoto').style.display  = 'none';
-    document.getElementById('btnUlang').style.display = 'inline-block';
-    document.getElementById('btnKirim').style.display = 'inline-block';
-    setStatus('Foto siap. Kirim atau ambil ulang.', '');
-  }
-
-  function ulangFoto() {
-    fotoBase64 = null;
-    document.getElementById('previewFoto').style.display  = 'none';
-    document.getElementById('videoKamera').style.display  = 'block';
-    document.getElementById('btnFoto').style.display      = 'inline-block';
-    document.getElementById('btnUlang').style.display     = 'none';
-    document.getElementById('btnKirim').style.display     = 'none';
-    setStatus('Arahkan kamera lalu ambil foto dokumentasi…', '');
-  }
-
-  function kirimFoto() {
-    if (!fotoBase64) return;
-    setStatus('⏳ Mengupload foto ke Drive…', 'loading');
-
-    const ts       = new Date().toISOString().replace(/[:.]/g, '-');
-    const fileName = 'absensi_' + (currentNama||'peserta').replace(/\s+/g,'_') + '_' + ts + '.jpg';
-
-    fetch(APPS_SCRIPT_URL, {
-      method : 'POST',
-      body   : JSON.stringify({
-        action   : 'foto',
-        base64   : fotoBase64,
-        fileName : fileName,
-        rowIndex : currentRow,
-        sheetName: currentSheet
-      }),
-      headers: { 'Content-Type': 'text/plain' }
-    })
-    .then(r => r.json())
-    .then(function(res) {
-      stopKamera();
-      setStatus(res.pesan, res.sukses ? 'sukses' : 'warn');
-      if (res.sukses) tambahRiwayat(currentNama, currentUsaha, true);
-      document.getElementById('btnScanLagi').style.display = 'inline-block';
-      document.getElementById('panelKamera').style.display = 'none';
-    })
-    .catch(function(err) {
-      setStatus('❌ Gagal upload: ' + err.message, 'gagal');
-      document.getElementById('btnScanLagi').style.display = 'inline-block';
-    });
-  }
-
-  function selesaiTanpaFoto() {
-    stopKamera();
-    tambahRiwayat(currentNama, currentUsaha, false);
-    setStatus('✅ Absensi tersimpan (tanpa foto).', 'sukses');
-    document.getElementById('panelKamera').style.display = 'none';
-    document.getElementById('btnScanLagi').style.display = 'inline-block';
-  }
-
-  function stopKamera() {
-    if (streamKamera) { streamKamera.getTracks().forEach(t => t.stop()); streamKamera = null; }
-  }
-
-  function setStatus(pesan, kelas) {
-    const el = document.getElementById('status');
-    el.textContent = pesan;
-    el.className   = kelas;
-  }
-
-  function tambahRiwayat(nama, usaha, adaFoto) {
-    totalScan++;
-    const div  = document.getElementById('riwayat');
-    const item = document.createElement('div');
-    item.className = 'item-riwayat';
-    const jam = new Date().toLocaleTimeString('id-ID');
-    item.innerHTML = jam + ' — <strong>' + (nama||'-') + '</strong>'
-      + (usaha ? ' · ' + usaha : '')
-      + (adaFoto ? '<br><span class="foto-tag">📸 Foto tersimpan</span>' : '');
-    div.insertBefore(item, document.getElementById('jumlah').nextSibling);
-    document.getElementById('jumlah').textContent = totalScan + ' peserta tercatat';
-  }
+function addRiwayat(nama,usaha,ada){
+  total++;
+  var d=document.getElementById('rwyt');
+  var el=document.createElement('div');
+  el.className='rv-item';
+  var j=new Date().toLocaleTimeString('id-ID');
+  el.innerHTML=j+' — <strong>'+(nama||'-')+'</strong>'+(usaha?' · '+usaha:'')
+    +(ada?'<br><span class="ftag">📸 Foto tersimpan</span>':'');
+  d.insertBefore(el,document.getElementById('jml').nextSibling);
+  document.getElementById('jml').textContent=total+' peserta tercatat';
+}
 </script>
 </body>
 </html>
